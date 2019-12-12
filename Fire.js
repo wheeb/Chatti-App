@@ -7,6 +7,7 @@ class Fire {
     }
 
     init = () => {
+        //dont init if inited already. stops accidental non-wanted inits
         if (!firebase.apps.length) {
             firebase.initializeApp({
                 apiKey: "AIzaSyB5O3kj9YcPezvKJ25VAL9aYNuXspLomLo",
@@ -21,7 +22,7 @@ class Fire {
     };
 
 
-
+    //if signed in before. return user
     observeAuth = () =>
         firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
@@ -34,11 +35,11 @@ class Fire {
             }
         }
     };
-
+    //helper to get uid
     get uid() {
         return (firebase.auth().currentUser || {}).uid;
     }
-
+    //get firebase database save location
     get ref() {
         return firebase.database().ref('messages');
     }
@@ -57,7 +58,7 @@ class Fire {
     };
 
 
-
+    //callback prop calls messages and gets 20 last messages
     on = callback =>
         this.ref
             .limitToLast(20)
@@ -66,7 +67,7 @@ class Fire {
     get timestamp() {
         return firebase.database.ServerValue.TIMESTAMP;
     }
-    // send the message to the Backend
+    // send the message
     send = messages => {
         for (let i = 0; i < messages.length; i++) {
             const { text, user } = messages[i];
@@ -83,7 +84,7 @@ class Fire {
 
     append = message => this.ref.push(message);
 
-    // close the connection to the Backend
+    // unsubscibe database
     off() {
         this.ref.off();
     }

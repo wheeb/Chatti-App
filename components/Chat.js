@@ -5,11 +5,7 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import CustomView from './CustomView'
-
 import Fire from '../Fire';
-
-
-
 import {getLocationAsync, pickImageAsync, takePictureAsync} from "./mediaUtils";
 
 class Chat extends Component{
@@ -29,6 +25,7 @@ class Chat extends Component{
     renderCustomView(props) {
         return <CustomView {...props} />
     }
+    //init firebase connection
     componentDidMount() {
         Fire.shared.on(message =>
             this.setState(previousState => ({
@@ -36,35 +33,20 @@ class Chat extends Component{
             }))
         );
     }
+    //disconnect firebase
     componentWillUnmount() {
         Fire.shared.off();
     }
 
     get user() {
-        // Return our name and our UID for gifted to parse
+        // return username and uid for gifted chat
         return {
             name: this.props.navigation.state.params.name,
             _id: Fire.shared.uid,
         };
     }
-
-
-
-
-
-    renderFooter = props => {
-        if (this.state.typingText) {
-            return (
-                <View style={styles.footerContainer}>
-                    <Text style={styles.footerText}>{this.state.typingText}</Text>
-                </View>
-            )
-        }
-        return null
-    };
-        //default message
+        //default messages
         componentWillMount() {
-            console.log(this.props.navigation.state.params.name);
         this.setState({
             messages: [
                 {
@@ -101,12 +83,10 @@ class Chat extends Component{
         return(
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
 
-
-
             <GiftedChat
                 messages={this.state.messages}
-                keyboardShouldPersistTaps='never'
-                //frame for location data
+                keyboardShouldPersistTaps='always'
+                //frame for location data and images
                 renderCustomView={this.renderCustomView}
                 //onSend={messages => this.onSend(messages)}
                 onSend={Fire.shared.send}
@@ -117,31 +97,44 @@ class Chat extends Component{
             />
 
 
-
-                <Button onPress={() => pickImageAsync(messages => this.onSend(messages))} title="photo" />
-                <Button onPress={() => takePictureAsync(messages => this.onSend(messages))} title="camera" />
-                <Button onPress={() => getLocationAsync(messages => this.onSend(messages))} title="mylocation" />
-
+                <View style={styles.buttonContainer} >
+                    <Button style={styles.footButton} onPress={() => pickImageAsync(messages => this.onSend(messages))} title="photo" />
+                    <Button style={styles.footButton} onPress={() => takePictureAsync(messages => this.onSend(messages))} title="camera" />
+                    <Button style={styles.footButton} onPress={() => getLocationAsync(messages => this.onSend(messages, this.user))} title="my location" />
+                </View>
 
             </View>
         );
     }
 
-    onSend(messages = []) {
-        this.setState(previousState => ( {
-            messages: GiftedChat.append(previousState.messages, messages)
-        }))
+    onSend = (messages = []) => {
+        const step = this.state.step + 1
+        this.setState(previousState => {
+            const sentMessages = [{ ...messages[0], sent: true, received: true }];
+            console.log(messages);
+            return {
+                messages: GiftedChat.append(
+                    previousState.messages,
+                    sentMessages,
+                ),
+                step,
+            }
+        })
     }
 
 
 }
 
 const styles = StyleSheet.create({
-    footerContainer: {
+    buttonContainer: {
+        flexDirection:'row',
+        alignItems: 'center',
+        justifyContent:'space-around',
+
 
     },
-    footerText:{
-
+    footButton:{
+        width: '30%'
     },
 
 

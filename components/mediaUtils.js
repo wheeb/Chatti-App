@@ -26,22 +26,28 @@ export default async function getPermissionAsync(permission) {
   return true
 }
 
-export async function getLocationAsync(onSend) {
+export async function getLocationAsync(onSend, user) {
+  const username = user;
+  console.log(username);
   if (await getPermissionAsync(Permissions.LOCATION)) {
     let location = await Location.getCurrentPositionAsync({});
+
     if (location) {
-      onSend([{ location: location.coords }])
+      onSend([{ location: location.coords,
+      user: username
+      }])
     }
   }
 }
 
 
-export async function pickImageAsync(onSend, onUpload) {
+export async function pickImageAsync(onSend, user) {
+  const username = user;
   if (await getPermissionAsync(Permissions.CAMERA_ROLL)) {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
-    })
+    });
 
     if (!result.cancelled) {
       onSend([{ image: result.uri }]);

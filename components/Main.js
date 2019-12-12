@@ -4,7 +4,6 @@ import {View, TextInput, StyleSheet, Text, TouchableOpacity} from  'react-native
 //const {navigate} = props.navigation;
 
 class Main extends Component{
-    //state for username
     static navigationOptions = {
         title: 'Chatter',
     };
