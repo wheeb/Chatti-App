@@ -1,3 +1,3 @@
-#Chatti app
+# Chatti app
 
 Made using Gifted Chat. 
