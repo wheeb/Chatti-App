@@ -1,0 +1,15 @@
+ {
+   "expo": {
+    "name": "ChatApp",
+    "icon": "./assets/icon.png",
+    "version": "1.0.0",
+    "slug": "your-app-slug",
+    "sdkVersion": "35.0.0",
+    "ios": {
+      "bundleIdentifier": "Juhicom"
+    },
+    "android": {
+      "package": "Juhicom.asd.sss"
+    }
+   }
+ }
